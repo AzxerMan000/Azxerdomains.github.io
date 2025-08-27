@@ -3,7 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <title>AzxerDomains</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 60px 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 { font-size: 2.8em; margin-bottom: 10px; }
+    header p { font-size: 1.2em; color: #e0f2e9; }
+
+    section { padding: 40px 20px; }
+    section h2 { font-size: 2em; margin-bottom: 30px; color: #4CAF50; }
+
+    ul#plans-list {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 0;
+    }
+
+    ul#plans-list li {
+      background: white;
+      padding: 25px 20px;
+      width: 250px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    ul#plans-list li:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    }
+
+    ul#plans-list li strong { font-size: 1.2em; color: #4CAF50; }
+
+    footer {
+      background-color: #333;
+      color: #fff;
+      padding: 25px 20px;
+      margin-top: 50px;
+    }
+
+    footer p { margin-bottom: 10px; font-size: 0.95em; }
+
+    footer a {
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: 600;
+      border: 2px solid #4CAF50;
+      padding: 8px 15px;
+      border-radius: 6px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    footer a:hover { background-color: #4CAF50; color: white; }
+  </style>
 </head>
 <body>
   <header>
@@ -21,6 +93,23 @@
     <a href="https://discord.gg/YOUR_PERMANENT_INVITE" target="_blank">เข้าร่วม Discord ของเรา</a>
   </footer>
 
-  <script src="app.js"></script>
+  <script>
+    const data = {
+      "plans": [
+        {
+          "name": "แพลนพื้นฐาน",
+          "price": "50 บาท/เดือน",
+          "features": ["เว็บไซต์ 1 เว็บ", "พื้นที่เก็บข้อมูล 5 GB", "SSL ฟรี"]
+        }
+      ]
+    };
+
+    const list = document.getElementById("plans-list");
+    data.plans.forEach(plan => {
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${plan.name}</strong><br>${plan.price}<br>${plan.features.join(", ")}`;
+      list.appendChild(li);
+    });
+  </script>
 </body>
 </html>

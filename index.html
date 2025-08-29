@@ -1,115 +1,155 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AzxerDomains</title>
-  <style>
-    /* Google Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    header {
-      background-color: #4CAF50;
-      color: white;
-      padding: 60px 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    header h1 { font-size: 2.8em; margin-bottom: 10px; }
-    header p { font-size: 1.2em; color: #e0f2e9; }
-
-    section { padding: 40px 20px; }
-    section h2 { font-size: 2em; margin-bottom: 30px; color: #4CAF50; }
-
-    ul#plans-list {
-      list-style: none;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 0;
-    }
-
-    ul#plans-list li {
-      background: white;
-      padding: 25px 20px;
-      width: 250px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    ul#plans-list li:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-    }
-
-    ul#plans-list li strong { font-size: 1.2em; color: #4CAF50; }
-
-    footer {
-      background-color: #333;
-      color: #fff;
-      padding: 25px 20px;
-      margin-top: 50px;
-    }
-
-    footer p { margin-bottom: 10px; font-size: 0.95em; }
-
-    footer a {
-      color: #4CAF50;
-      text-decoration: none;
-      font-weight: 600;
-      border: 2px solid #4CAF50;
-      padding: 8px 15px;
-      border-radius: 6px;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    footer a:hover { background-color: #4CAF50; color: white; }
-  </style>
+<meta charset="UTF-8">
+<title>PepperArmor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body>
-  <header>
-    <h1>ยินดีต้อนรับสู่ AzxerDomains</h1>
-    <p>แพลนโฮสติ้งเริ่มต้นเพียง 50 บาท/เดือน</p>
-  </header>
+<body class="bg-gray-900 text-white">
+<div id="root"></div>
 
-  <section>
-    <h2>แพลนของเรา</h2>
-    <ul id="plans-list"></ul>
-  </section>
+<script type="text/babel">
+const { useState } = React;
 
-  <footer>
-    <p>© 2025 AzxerDomains</p>
-    <a href="https://discord.gg/YOUR_PERMANENT_INVITE" target="_blank">เข้าร่วม Discord ของเรา</a>
-  </footer>
+// Store users in memory for now
+const INITIAL_USERS = [
+  { username: "admin", password: "123456" }
+];
 
-  <script>
-    const data = {
-      "plans": [
-        {
-          "name": "แพลนพื้นฐาน",
-          "price": "50 บาท/เดือน",
-          "features": ["เว็บไซต์ 1 เว็บ", "พื้นที่เก็บข้อมูล 5 GB", "SSL ฟรี"]
-        }
-      ]
-    };
+function Navbar({ setPage, loggedIn, logout }) {
+  return (
+    <nav className="w-full flex justify-between items-center p-4 bg-gray-800 rounded-xl shadow-lg">
+      <h1 className="text-xl font-bold cursor-pointer" onClick={() => setPage("home")}>PepperArmor</h1>
+      <div className="space-x-4">
+        {loggedIn ? (
+          <button onClick={logout} className="bg-red-600 px-3 py-1 rounded-lg hover:bg-red-700">Logout</button>
+        ) : (
+          <>
+            <button onClick={() => setPage("login")} className="hover:underline">Login</button>
+            <button onClick={() => setPage("signup")} className="hover:underline">Sign Up</button>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+}
 
-    const list = document.getElementById("plans-list");
-    data.plans.forEach(plan => {
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${plan.name}</strong><br>${plan.price}<br>${plan.features.join(", ")}`;
-      list.appendChild(li);
-    });
-  </script>
-</body>
-</html>
+function Login({ onLogin, users }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [notBot, setNotBot] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = () => {
+    if (!notBot) { setError("Please confirm you are not a bot!"); return; }
+    const user = users.find(u => u.username === username && u.password === password);
+    if (user) onLogin(user.username);
+    else setError("Invalid username or password!");
+  };
+
+  return (
+    <div className="bg-gray-800 p-6 rounded-xl shadow-xl mt-16 w-full max-w-sm">
+      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      {error && <p className="text-red-500 mb-3">{error}</p>}
+      <input type="text" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)}
+        className="w-full p-2 mb-3 rounded bg-gray-700"/>
+      <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)}
+        className="w-full p-2 mb-3 rounded bg-gray-700"/>
+      <label className="flex items-center space-x-2 mb-3">
+        <input type="checkbox" checked={notBot} onChange={()=>setNotBot(!notBot)} className="accent-blue-600"/>
+        <span>I am not a bot</span>
+      </label>
+      <button onClick={handleLogin} className="w-full bg-blue-600 py-2 rounded-lg hover:bg-blue-700">Login</button>
+    </div>
+  );
+}
+
+function SignUp({ onSignUp, users }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [notBot, setNotBot] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSignUp = () => {
+    if (!notBot) { setError("Please confirm you are not a bot!"); return; }
+    if (!username || !password) { setError("Fill all fields!"); return; }
+    if (users.find(u=>u.username === username)) { setError("Username already exists!"); return; }
+    onSignUp({ username, password });
+  };
+
+  return (
+    <div className="bg-gray-800 p-6 rounded-xl shadow-xl mt-16 w-full max-w-sm">
+      <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+      {error && <p className="text-red-500 mb-3">{error}</p>}
+      <input type="text" placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)}
+        className="w-full p-2 mb-3 rounded bg-gray-700"/>
+      <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)}
+        className="w-full p-2 mb-3 rounded bg-gray-700"/>
+      <label className="flex items-center space-x-2 mb-3">
+        <input type="checkbox" checked={notBot} onChange={()=>setNotBot(!notBot)} className="accent-blue-600"/>
+        <span>I am not a bot</span>
+      </label>
+      <button onClick={handleSignUp} className="w-full bg-green-600 py-2 rounded-lg hover:bg-green-700">Sign Up</button>
+    </div>
+  );
+}
+
+function Dashboard() {
+  const [data, setData] = useState({
+    scripts: [{ id: 1, name: "myscript.lua" }],
+    keys: [{ id: 1, value: "ABC123", status: "valid" }]
+  });
+
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if(file) setData({...data, scripts: [...data.scripts, {id:Date.now(), name:file.name}]});
+  };
+  const generateKey = () => {
+    const newKey = {id:Date.now(), value:Math.random().toString(36).substr(2,8).toUpperCase(), status:"valid"};
+    setData({...data, keys:[...data.keys,newKey]});
+  };
+
+  return (
+    <div className="bg-gray-800 p-6 rounded-2xl shadow-xl w-full max-w-2xl mt-6">
+      <h2 className="text-2xl font-bold mb-4">Developer Dashboard</h2>
+      <input type="file" onChange={handleUpload} className="block mb-4 text-gray-300"/>
+      <button className="bg-green-600 px-4 py-2 rounded-lg hover:bg-green-700 mb-4">Upload & Protect</button>
+      <div className="mt-4">
+        <h3 className="font-semibold">Scripts</h3>
+        <pre className="bg-gray-900 p-3 rounded text-sm overflow-x-auto">{JSON.stringify(data.scripts,null,2)}</pre>
+      </div>
+      <div className="mt-6">
+        <h3 className="font-semibold flex justify-between items-center">
+          License Keys
+          <button onClick={generateKey} className="bg-blue-600 px-2 py-1 text-sm rounded hover:bg-blue-700">Generate Key</button>
+        </h3>
+        <pre className="bg-gray-900 p-3 rounded text-sm overflow-x-auto">{JSON.stringify(data.keys,null,2)}</pre>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [page,setPage]=useState("home");
+  const [users,setUsers]=useState(INITIAL_USERS);
+  const [loggedInUser,setLoggedInUser]=useState(null);
+
+  const handleLogin=(username)=>{setLoggedInUser(username); setPage("dashboard");};
+  const handleSignUp=(user)=>{setUsers([...users,user]); setLoggedInUser(user.username); setPage("dashboard");};
+  const logout=()=>{setLoggedInUser(null); setPage("home");};
+
+  return (
+    <div className="min-h-screen flex flex-col items-center p-6">
+      <Navbar setPage={setPage} loggedIn={!!loggedInUser} logout={logout}/>
+      {page==="home" && <div className="text-center mt-16 space-y-6">
+        <h1 className="text-5xl font-bold">PepperArmor</h1>
+        <p className="text-gray-400">Protect your Roblox Lua scripts with IronBrew 2 + License Manager</p>
+        {!loggedInUser && <button onClick={()=>setPage("login")} className="bg-blue-600 px-6 py-2 rounded-xl hover:bg-blue-700">Login</button>}
+      </div>}
+      {page==="login" && !loggedInUser && <Login onLogin={handleLogin} users={users}/>}
+      {page==="signup" && !loggedInUser && <SignUp onSignUp={handleSignUp} users={users}/>}
+      {page==="dashboard" && loggedInUser && <Dashboard/>}
